@@ -1,0 +1,1 @@
+import Omise from 'omise-react-native'

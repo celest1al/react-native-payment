@@ -3,10 +3,12 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
 import { Pressable } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { CreateCardScreen } from "./src/screens/create-card";
-import { CardsScreen } from "./src/screens/cards-list";
+import { CreateCardScreen } from "./src/screens/create-card-screen";
+import { CardsScreen } from "./src/screens/cards-list-screen";
 import { useFonts } from "expo-font";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+const queryClient = new QueryClient();
 const Stack = createNativeStackNavigator();
 
 export default function App() {
@@ -21,40 +23,42 @@ export default function App() {
   }
 
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="cards"
-          component={CardsScreen}
-          options={({ navigation }) => ({
-            headerTitle: "Cards",
-            headerShadowVisible: false,
-            headerLeft: () => (
-              <Pressable>
-                <Ionicons name="chevron-back" size={24} color="black" />
-              </Pressable>
-            ),
-            headerRight: () => (
-              <Pressable onPress={() => navigation.navigate("create-card")}>
-                <Ionicons name="add" size={24} color="black" />
-              </Pressable>
-            ),
-          })}
-        />
-        <Stack.Screen
-          name="create-card"
-          component={CreateCardScreen}
-          options={({ navigation }) => ({
-            headerTitle: "",
-            headerShadowVisible: false,
-            headerLeft: () => (
-              <Pressable onPress={() => navigation.goBack()}>
-                <Ionicons name="chevron-back" size={24} color="black" />
-              </Pressable>
-            ),
-          })}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <QueryClientProvider client={queryClient}>
+      <NavigationContainer>
+        <Stack.Navigator>
+          <Stack.Screen
+            name="cards"
+            component={CardsScreen}
+            options={({ navigation }) => ({
+              headerTitle: "Cards",
+              headerShadowVisible: false,
+              headerLeft: () => (
+                <Pressable>
+                  <Ionicons name="chevron-back" size={24} color="black" />
+                </Pressable>
+              ),
+              headerRight: () => (
+                <Pressable onPress={() => navigation.navigate("create-card")}>
+                  <Ionicons name="add" size={24} color="black" />
+                </Pressable>
+              ),
+            })}
+          />
+          <Stack.Screen
+            name="create-card"
+            component={CreateCardScreen}
+            options={({ navigation }) => ({
+              headerTitle: "",
+              headerShadowVisible: false,
+              headerLeft: () => (
+                <Pressable onPress={() => navigation.goBack()}>
+                  <Ionicons name="chevron-back" size={24} color="black" />
+                </Pressable>
+              ),
+            })}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </QueryClientProvider>
   );
 }

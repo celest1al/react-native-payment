@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Image,
   Pressable,
@@ -8,16 +8,27 @@ import {
   View,
 } from "react-native";
 import {
+  checkCreditCardType,
   formattedCreditCard,
   formattedCVV,
   formattedExpiryDate,
-} from "../lib/format";
+} from "../libs/card-format";
 
 export function CreateCardScreen() {
   const [cardNumber, setCardNumber] = useState("");
   const [cardUser, setCardUser] = useState("");
   const [cardExpiry, setCardExpiry] = useState("");
   const [cardCVV, setCardCVV] = useState("");
+
+  const cardType = useMemo(() => {
+    const card = cardNumber.split(" ").join("");
+    const type = checkCreditCardType(card);
+
+    if (type) {
+      console.log("type", type);
+      return type;
+    }
+  }, [cardNumber]);
 
   const handleCardNumberChange = (value: string) => {
     setCardNumber(formattedCreditCard(value));
@@ -46,7 +57,7 @@ export function CreateCardScreen() {
                 style={styles.textTitle}
                 className="h-[56px] w-full min-w-[327px] rounded-md border-[1.5px] border-[#E6E3E6] p-5 text-base text-black"
                 placeholder="0000 0000 0000 0000"
-                keyboardType="numeric"
+                inputMode="numeric"
                 maxLength={19}
                 value={cardNumber}
                 onChangeText={handleCardNumberChange}
@@ -70,14 +81,14 @@ export function CreateCardScreen() {
               onChangeText={handleCardUserChange}
             />
           </View>
-          <View className="flex flex-row justify-between pt-3">
+          <View className="flex gap-2 flex-row justify-between pt-3">
             <View className="flex gap-2">
               <Text style={styles.textTitle}>Expiry date</Text>
               <TextInput
                 style={styles.textTitle}
                 className="h-[56px] w-full min-w-[154px] rounded-md border-[1.5px] border-[#E6E3E6] p-5 text-base text-black"
                 placeholder="MM/YY"
-                keyboardType="numeric"
+                inputMode="numeric"
                 maxLength={5}
                 value={cardExpiry}
                 onChangeText={handleCardExpiryChange}
@@ -89,7 +100,7 @@ export function CreateCardScreen() {
                 style={styles.textTitle}
                 className="h-[56px] w-full min-w-[154px] rounded-md border-[1.5px] border-[#E6E3E6] p-5 text-base text-black"
                 placeholder="000"
-                keyboardType="numeric"
+                inputMode="numeric"
                 maxLength={3}
                 value={cardCVV}
                 onChangeText={handleCardCVVChange}
