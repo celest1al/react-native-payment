@@ -1,13 +1,33 @@
-import { Text, View } from "react-native";
+import { Image, Text, View } from "react-native";
+import type { Card } from "../types/card";
+interface CreditCardProps {
+  card: Card
+}
 
-export function CreditCard() {
+type CardType = 'Visa' | 'MasterCard' | 'JCB';
+
+const LOGO: Record<CardType, any>  = {
+  Visa: require("../../assets/icons/visa_h16_color.png"),
+  MasterCard: require("../../assets/icons/mastercard_high.png"),
+  JCB: require("../../assets/icons/jcb_high.png"),
+};
+
+export function CreditCard({ card }: CreditCardProps) {
+  const lastFourDigits = card?.cardNumber?.slice(-4);
+  const cardType = card?.omiseCardData?.card?.brand as CardType ?? "Visa";
+
+  const cardLogo = LOGO[cardType]
+
   return (
     <View
       style={styles.cardContainer}
       className="px-8 py-6 min-h-[180px] min-w-[332px]"
     >
       <View className="max-w-[230px]">
-        <Text className="text-3xl font-bold">Visa</Text>
+        <Image source={cardLogo} style={{
+          width: 66,
+          height: 23,
+        }} />
         <View className="mt-4 flex gap-4 items-center justify-between flex-row">
           <Text
             style={styles.cardBullet}
@@ -28,7 +48,7 @@ export function CreditCard() {
             ••••
           </Text>
           <Text style={styles.cardTitle} className="text-lg text-[#808080]">
-            3282
+            {lastFourDigits}
           </Text>
         </View>
         <View className="flex justify-between flex-row pt-8">
@@ -40,7 +60,7 @@ export function CreditCard() {
               Name on Card
             </Text>
             <Text style={styles.cardTitle} className="text-sm font-medium">
-              Ty Lee
+              {card.cardUser}
             </Text>
           </View>
           <View className="flex gap-5">
@@ -51,7 +71,7 @@ export function CreditCard() {
               Expires
             </Text>
             <Text style={styles.cardTitle} className="text-sm font-medium">
-              12/25
+              {card.expiryDate}
             </Text>
           </View>
         </View>

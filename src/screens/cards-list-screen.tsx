@@ -1,9 +1,9 @@
 import { Pressable, SafeAreaView, Text, View } from "react-native";
 import { CreditCard } from "../components/credit-card";
 import { useCardStore } from "../store/card-store";
-import { useEffect } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { reactNativeOmise } from "../libs/omise";
+import Toast from "react-native-toast-message";
 
 interface CardsScreen {
   navigation: any;
@@ -11,30 +11,36 @@ interface CardsScreen {
 
 export function CardsScreen({ navigation }: CardsScreen) {
   const cards = useCardStore((state) => state.cards);
-  const { mutate: createCustomerMutation } = useMutation({
-    mutationKey: ["create-card"],
-    mutationFn: async () => {
-      const data = await reactNativeOmise.createCustomer({
-        email: "test@test.com",
+  const { mutate: createSourceMutation } = useMutation({
+    mutationKey: ["create-source"],
+    mutationFn: async (token: string) => {
+      const data = await reactNativeOmise.createCharge({
+        amount: 100000,
+        currency: "thb",
+        card: token,
       });
-
-      console.log("data", data);
 
       return data;
     },
+    onSuccess: () => {
+      Toast.show({
+        type: "success",
+        text1: "Payment successful",
+        text2: "Card charged successfully",
+      });
+    },
   });
-
-  useEffect(() => {
-    createCustomerMutation();
-  }, []);
 
   return (
     <SafeAreaView className="flex-1 bg-white">
       {cards.length > 0 ? (
         <View className="mt-4 flex-1 items-center gap-4 p-4">
           {cards.map((card, index) => (
-            <Pressable key={`${card.id}-${index}`}>
-              <CreditCard />
+            <Pressable
+              key={`${card.id}-${index}`}
+              onPress={() => createSourceMutation(card?.omiseCardData?.id)}
+            >
+              <CreditCard card={card} />
             </Pressable>
           ))}
         </View>

@@ -7,6 +7,7 @@ import { CreateCardScreen } from "./src/screens/create-card-screen";
 import { CardsScreen } from "./src/screens/cards-list-screen";
 import { useFonts } from "expo-font";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Toast from "react-native-toast-message"
 
 const queryClient = new QueryClient();
 const Stack = createNativeStackNavigator();
@@ -59,6 +60,7 @@ export default function App() {
           />
         </Stack.Navigator>
       </NavigationContainer>
+      <Toast />
     </QueryClientProvider>
   );
 }

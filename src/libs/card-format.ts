@@ -52,13 +52,13 @@ export const formattedCreditCard = (value: string) => {
 
   return `${number.slice(0, 4)} ${number.slice(4, 8)} ${number.slice(
     8,
-    12,
+    12
   )} ${number.slice(12, 16)}`;
 };
 
 export const validateExpirationDate = (
   expirationMonth: number,
-  expirationYear: number,
+  expirationYear: number
 ) => {
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
@@ -88,4 +88,8 @@ export const formattedExpiryDate = (value: string) => {
 
 export const formattedCVV = (value: string) => {
   return value.trim().replace(/[^0-9]/g, "");
+};
+
+export const getRandomNumber = (min: number = 1000, max: number = 50000) => {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
 };

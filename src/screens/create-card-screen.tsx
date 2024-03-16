@@ -13,22 +13,66 @@ import {
   formattedCVV,
   formattedExpiryDate,
 } from "../libs/card-format";
+import { useMutation } from "@tanstack/react-query";
+import { reactNativeOmise } from "../libs/omise";
+import { useCardStore } from "../store/card-store";
+import Toast from 'react-native-toast-message';
 
-export function CreateCardScreen() {
+interface CreateCardScreenProps {
+  navigation: any;
+}
+
+export function CreateCardScreen({ navigation }: CreateCardScreenProps) {
+  const addCard = useCardStore((state) => state.addCard);
   const [cardNumber, setCardNumber] = useState("");
   const [cardUser, setCardUser] = useState("");
   const [cardExpiry, setCardExpiry] = useState("");
   const [cardCVV, setCardCVV] = useState("");
+  const { mutate: createCardMutation } = useMutation({
+    mutationKey: ["create-card"],
+    mutationFn: async () => {
+      const data = await reactNativeOmise.createToken({
+        card: {
+          name: cardUser,
+          city: "Bangkok",
+          postal_code: 10320,
+          number: cardNumber,
+          expiration_month: Number(cardExpiry.split("/")[0]),
+          expiration_year: Number(`20${cardExpiry.split("/")[1]}`),
+          security_code: Number(cardCVV),
+        },
+      });
 
-  const cardType = useMemo(() => {
-    const card = cardNumber.split(" ").join("");
-    const type = checkCreditCardType(card);
-
-    if (type) {
-      console.log("type", type);
-      return type;
+      return data;
+    },
+    onSuccess: (data) => {
+      if (data?.object === "error") {
+        Toast.show({
+          type: "error",
+          text1: "Error creating card",
+          text2: data?.message || "An error occurred",
+        });
+        return;
+      } else {
+        addCard({
+          id: Math.floor(Math.random() * 1000),
+          cardUser,
+          cardNumber,
+          expiryDate: cardExpiry,
+          cvv: cardCVV,
+          omiseCardData: data,
+        });
+        navigation.goBack();
+      }
+    },
+    onError: (error) => {
+      Toast.show({
+        type: "error",
+        text1: "Error creating card",
+        text2: error?.message || "An error occurred",
+      });
     }
-  }, [cardNumber]);
+  });
 
   const handleCardNumberChange = (value: string) => {
     setCardNumber(formattedCreditCard(value));
@@ -112,7 +156,10 @@ export function CreateCardScreen() {
           </View>
         </View>
         <View className="flex items-center justify-center p-6">
-          <Pressable className="flex h-12 w-full items-center justify-center rounded-md bg-[#FF3366]">
+          <Pressable
+            onPress={() => createCardMutation()}
+            className="flex h-12 w-full items-center justify-center rounded-md bg-[#FF3366]"
+          >
             <Text style={styles.textTitle} className="text-lg text-white">
               Add Card
             </Text>

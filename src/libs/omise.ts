@@ -2,8 +2,10 @@ import base64 from "base-64";
 
 const PKG_NAME = "";
 const PKG_VERSION = "";
-const vaultEndpoint = "https://vault.omise.co/";
-const apiEndpoint = "https://api.omise.co/";
+// const vaultEndpoint = "https://vault.omise.co/";
+const vaultEndpoint = "http://localhost:8000/vault/"
+// const apiEndpoint = "https://api.omise.co/";
+const apiEndpoint = "http://localhost:8000/api/";
 const PUBLIC_KEY = process.env.EXPO_PUBLIC_OMISE_PUBLIC_KEY ?? "";
 const SECRET_KEY = process.env.EXPO_PUBLIC_OMISE_SECRET_KEY ?? "";
 
@@ -37,6 +39,12 @@ type SourceData = {
   type: string;
   amount: number;
   currency: string;
+};
+
+type ChargeData = {
+  amount: number;
+  currency: string;
+  card: string;
 };
 
 let _key = "";
@@ -88,11 +96,11 @@ class ReactNativeOmise {
         return await response.json();
       } else {
         console.log("response not ok", response);
-        throw await response.json();
+        return await response.json();
       }
     } catch (error) {
       console.error("Error creating token:", error);
-      throw error;
+      return error;
     }
   }
 
@@ -109,10 +117,39 @@ class ReactNativeOmise {
       });
 
       if (response.ok && response.status === 200) {
-        return response.json();
+        return await response.json();
       } else {
         console.log("response not ok", response);
-        throw response.json();
+        throw await response.json();
+      }
+    } catch (error) {
+      console.error("Error creating source:", error);
+      throw error;
+    }
+  }
+
+  async createCharge(data: ChargeData) {
+    const sourceEndpoint = `${apiEndpoint}charges`;
+    const headers = {
+      Authorization: "Basic " + base64.encode(SECRET_KEY + ":"),
+      "User-Agent": PKG_NAME + "/" + PKG_VERSION,
+      "Access-Control-Allow-Origin": "*",
+      "Content-Type": "application/json",
+    }
+
+    try {
+      const response = await fetch(sourceEndpoint, {
+        method: "POST",
+        cache: "no-cache",
+        headers: headers,
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok && response.status === 200) {
+        return await response.json();
+      } else {
+        console.log("response not ok", response);
+        throw await response.json();
       }
     } catch (error) {
       console.error("Error creating source:", error);
