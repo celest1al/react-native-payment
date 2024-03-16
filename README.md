@@ -28,7 +28,7 @@ or
 npm install
 ```
 
-- rename the `.env.example` to `.env` and fill in the `EXPO_PUBLIC_OMISE_PUBLIC_KEY` and `EXPO_PUBLIC_OMISE_SECRET_KEY`
+- rename the `.env.example` to `.env` and fill in the `EXPO_PUBLIC_OMISE_PUBLIC_KEY`, `EXPO_PUBLIC_OMISE_SECRET_KEY`, and `EXPO_PUBLIC_OMISE_PROXY_URL` (default is `http://localhost:8000`)
 
 - Clone the Omise proxy server and follow the instruction to run the server
 

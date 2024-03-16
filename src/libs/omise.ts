@@ -2,10 +2,9 @@ import base64 from "base-64";
 
 const PKG_NAME = "";
 const PKG_VERSION = "";
-// const vaultEndpoint = "https://vault.omise.co/";
-const vaultEndpoint = "http://localhost:8000/vault/"
-// const apiEndpoint = "https://api.omise.co/";
-const apiEndpoint = "http://localhost:8000/api/";
+const PROXY_URL = process.env.EXPO_PUBLIC_PROXY_URL ?? "";
+const vaultEndpoint = `${PROXY_URL}/vault/`
+const apiEndpoint = `${PROXY_URL}/api/`;
 const PUBLIC_KEY = process.env.EXPO_PUBLIC_OMISE_PUBLIC_KEY ?? "";
 const SECRET_KEY = process.env.EXPO_PUBLIC_OMISE_SECRET_KEY ?? "";
 
