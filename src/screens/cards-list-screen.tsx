@@ -4,6 +4,7 @@ import { useCardStore } from "../store/card-store";
 import { useMutation } from "@tanstack/react-query";
 import { reactNativeOmise } from "../libs/omise";
 import Toast from "react-native-toast-message";
+import { getRandomNumber } from "../libs/card-format";
 
 interface CardsScreen {
   navigation: any;
@@ -15,7 +16,7 @@ export function CardsScreen({ navigation }: CardsScreen) {
     mutationKey: ["create-source"],
     mutationFn: async (token: string) => {
       const data = await reactNativeOmise.createCharge({
-        amount: 100000,
+        amount: getRandomNumber(1000, 10000),
         currency: "thb",
         card: token,
       });
